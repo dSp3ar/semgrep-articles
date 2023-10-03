@@ -1,0 +1,21 @@
+rules:
+  - id: nosql_injection_prevention
+    patterns:
+      - pattern-inside: |
+          app.$REQUEST('$PATH', (req, res) => {
+              ...
+              req.$DATA
+              ...
+          })
+      - metavariable-regex:
+          metavariable: $DATA
+          regex: body|params|query
+      - pattern: $MODEL.$METHOD(...)
+      - metavariable-regex:
+          metavariable: $METHOD
+          regex: save|find|findById|findByIdAndUpdate|findByIdAndRemove
+    message: | 
+      Use sanitizeUserInput() middleware for sanitizing user input in $PATH route!
+    languages:
+      - javascript
+    severity: WARNING
